@@ -158,7 +158,15 @@ class LanguageModelConfig(BaseModel):
             and self.type != ModelType.Embedding
             and self.encoding_model.strip() == ""
         ):
-            self.encoding_model = tiktoken.encoding_name_for_model(self.model)
+            try:
+                self.encoding_model = tiktoken.encoding_name_for_model(self.model)
+            except KeyError:
+                # Handle newer models like gpt-5 that tiktoken doesn't recognize yet
+                # Default to cl100k_base which is used by GPT-4 and newer models
+                logger.warning(
+                    f"Model '{self.model}' not recognized by tiktoken. Falling back to 'cl100k_base' encoding."
+                )
+                self.encoding_model = "cl100k_base"
 
     api_base: str | None = Field(
         description="The base URL for the LLM API.",

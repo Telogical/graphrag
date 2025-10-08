@@ -1,0 +1,67 @@
+# Example GraphRAG configuration for using GPT-5
+#
+# This configuration demonstrates how to use GPT-5 with GraphRAG.
+# Two fixes were applied to support GPT-5:
+#   1. Tiktoken encoding fallback for unknown models
+#   2. Null parameter filtering (fixes GitHub issue #2023)
+#
+# To use this configuration:
+# 1. Set your OpenAI API key in a .env file: GRAPHRAG_API_KEY=your-key-here
+# 2. Copy this file to your project root as settings.yaml
+# 3. Adjust parameters as needed for your use case
+
+models:
+  # GPT-5 Chat Model Configuration
+  default_chat_model:
+    # Use "chat" type for LiteLLM integration (recommended)
+    type: chat
+    auth_type: api_key
+    api_key: ${GRAPHRAG_API_KEY}
+    model_provider: openai
+    model: gpt-5  # or gpt-5-turbo, gpt-5-preview, etc.
+    model_supports_json: true
+    temperature: 0
+    max_tokens: 4000
+    # Rate limiting (adjust based on your API quota)
+    requests_per_minute: 50
+    tokens_per_minute: 100000
+    concurrent_requests: 25
+
+  # Embedding Model Configuration
+  # Note: You might want to use a compatible embedding model
+  default_embedding_model:
+    type: embedding
+    auth_type: api_key
+    api_key: ${GRAPHRAG_API_KEY}
+    model_provider: openai
+    model: text-embedding-3-large  # or text-embedding-3-small for cost savings
+    batch_size: 16
+
+# Optional: You can also use GPT-5 with the legacy fnllm provider
+# (though LiteLLM is recommended for broader compatibility)
+#
+# models:
+#   default_chat_model:
+#     type: openai_chat  # This will show a deprecation warning
+#     auth_type: api_key
+#     api_key: ${GRAPHRAG_API_KEY}
+#     model: gpt-5
+#     model_supports_json: true
+
+# For Azure OpenAI GPT-5 deployment:
+#
+# models:
+#   default_chat_model:
+#     type: chat
+#     auth_type: api_key  # or azure_managed_identity
+#     api_key: ${AZURE_OPENAI_API_KEY}
+#     model_provider: azure
+#     model: gpt-5
+#     deployment_name: your-gpt5-deployment-name
+#     api_base: https://your-resource.openai.azure.com/
+#     api_version: 2024-08-01-preview  # Check Azure docs for latest version
+#     model_supports_json: true
+
+# The rest of your GraphRAG configuration follows...
+# See docs/config/yaml.md for full configuration options
+

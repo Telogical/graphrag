@@ -67,6 +67,10 @@ def _create_base_embeddings(
         "audience": model_config.audience,
     }
 
+    # Remove None values - some models (like GPT-5) don't accept null parameters
+    # Keep only non-None values to avoid API errors
+    base_args = {k: v for k, v in base_args.items() if v is not None}
+
     if model_config.auth_type == AuthType.AzureManagedIdentity:
         if model_config.model_provider != "azure":
             msg = "Azure Managed Identity authentication is only supported for Azure models."
